@@ -12,18 +12,18 @@ import java.util.List;
 @Table(name="order_details")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderId;
+    //note:orderid is not being generated it is coming out as 0
 
     private String orderDetails;
 
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
+//    public int getOrderId() {
+//        return orderId;
+//    }
+//
+//    public void setOrderId(int orderId) {
+//        this.orderId = orderId;
+//    }
 
     public String getOrderDetails() {
         return orderDetails;

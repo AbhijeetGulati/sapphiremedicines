@@ -17,6 +17,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
 
 @RestController
 @RequestMapping("/orders")
@@ -29,7 +34,7 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public int createDetails(@RequestBody Order order) throws IOException {
+    public ResponseEntity<String> createDetails(@RequestBody Order order) throws IOException {
         // Assigning the content of the file
 
 
@@ -67,8 +72,11 @@ public class OrderController {
             bufferedWriter = new BufferedWriter(fileWriter);
 
             java.util.Map<String, Object> data = new java.util.HashMap<>();
-            data.put("orderid", order.getOrderId());
-            data.put("orderDetails",order.getOrderDetails());
+            //data.put("orderid", order.getOrderId());
+            //we are just returing order details which will also contain the order id
+            //we are just returning the http response code
+
+            data.put("orderDetails", order.getOrderDetails());
 //            data.put("quantity", order.getQuantity());
 //            data.put("skuid",order.getSkuid());
 //            data.put("address",order.getAddress());
@@ -80,6 +88,7 @@ public class OrderController {
             ObjectMapper objectMapper = new ObjectMapper();
             //String jsonString = objectMapper.writeValueAsString(data);
             String text = null;
+
             try {
                 // Convert the JSON object to a JSON-formatted string
                 text = objectMapper.writeValueAsString(data);
@@ -90,8 +99,28 @@ public class OrderController {
                 e.printStackTrace();
             }
 
+
+//            String formattedDateTime = null;
+//            try {
+//                Instant currentInstant = Instant.now();
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E, dd MMM yyyy HH:mm:ss z");
+//                formattedDateTime = formatter.format(currentInstant);
+//
+//                System.out.println("Formatted Date and Time: " + formattedDateTime);
+//            } catch (DateTimeParseException e) {
+//                System.err.println("Error formatting date and time: " + e.getMessage());
+//            }
+
+//            Instant currentInstant = Instant.now();
+//            DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss Z");
+//            String formattedDateTime = dateTimeFormatter.format(currentInstant);
+
+            //String t1=obj.toString();
+             String date=new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(Calendar.getInstance().getTime());
+
             // Data to append
-            String dataToAppend = text;
+            String dataToAppend = text + " order id : "+date;
+            System.out.println(dataToAppend);
 
             // Append the data to the file
             bufferedWriter.write(dataToAppend);
@@ -113,6 +142,8 @@ public class OrderController {
                 e.printStackTrace();
             }
         }
-        return order.getOrderId();
+
+        System.out.println(order.getOrderDetails());
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 }
